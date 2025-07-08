@@ -51,12 +51,20 @@ const UserSchema = new Schema<User>({
     timestamps: true,
 });
 
+//sebelum save data ke database password akan di encryption
 UserSchema.pre("save", function (next) {
     const user = this;
     user.password = encrypt(user.password);
 
     next();
 });
+
+//password tidak akan diperlihatkan
+UserSchema.methods.toJSON= function(){
+    const user = this.toObject();
+    delete user.password;
+    return user;
+}
 
 const UserModel = mongoose.model("User", UserSchema);
 
