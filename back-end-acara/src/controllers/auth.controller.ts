@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import * as yup from 'yup';
+import UserModel from "../models/user.model";
 
 type TRegister = {
     fullName: string;
-    username: string;
+    userName: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -11,17 +12,17 @@ type TRegister = {
 
 const registerValidateSchema = yup.object({
     fullName: yup.string().required(),
-    username: yup.string().required(),
+    userName: yup.string().required(),
     email: yup.string().email().required(),
     password: yup.string().required(),
-    confirmPassword: yup.string().required().oneOf([yup.ref('password'),""], "Password not match"),
+    confirmPassword: yup.string().required().oneOf([yup.ref('password'), ""], "Password not match"),
 });
 
 export default {
     async register(req: Request, res: Response) {
         const {
             fullName,
-            username,
+            userName,
             email,
             password,
             confirmPassword
@@ -30,18 +31,22 @@ export default {
         try {
             await registerValidateSchema.validate({
                 fullName,
-                username,
+                userName,
                 email,
                 password,
                 confirmPassword
             });
+
+            const result = await UserModel.create({
+                fullName,
+                userName,
+                email,
+                password
+            })
+
             res.status(200).json({
                 message: 'Registration successful',
-                data:   {
-                    fullName,
-                    username,
-                    email,
-                }
+                data: result
             })
         } catch (error) {
             const err = error as unknown as Error;
