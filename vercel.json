@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/index.ts",
+      "src": "back-end-acara/src/index.ts",
       "use": "@vercel/node",
       "config": { "includeFiles": ["src/**"] }
     }
@@ -10,7 +10,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/index.ts"
+      "dest": "back-end-acara/src/index.ts"
     }
   ]
 }
