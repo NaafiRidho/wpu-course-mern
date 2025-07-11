@@ -28,8 +28,12 @@ const doc = {
             LoginRequest: {
                 identifier: "Naafi",
                 password: "123456"
+            },
+            ActivationRequest: {
+                code: "abcdef"
             }
-        }
+
+        },
     }
 };
 

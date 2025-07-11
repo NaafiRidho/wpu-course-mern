@@ -22,7 +22,15 @@ const registerValidateSchema = yup.object({
     fullName: yup.string().required(),
     userName: yup.string().required(),
     email: yup.string().email().required(),
-    password: yup.string().required(),
+    password: yup.string().required().min(6, "Password must be at least 6 characters").test('at-least-one-uppercase-latter', 'Contains at least one uppercase latter', (value) => {
+        if (!value) return false;
+        const regex = /^(?=.*[A-Z])/;
+        return regex.test(value);
+    }).test('at-least-one-number-latter', 'Contains at least one number latter', (value) => {
+        if (!value) return false;
+        const regex = /^(?=.*\d)/;
+        return regex.test(value);
+    }),
     confirmPassword: yup.string().required().oneOf([yup.ref('password'), ""], "Password not match"),
 });
 
@@ -91,7 +99,8 @@ export default {
                     {
                         userName: identifier
                     }
-                ]
+                ],
+                isActive:true,
             });
             if (!userIdentifier) {
                 return res.status(403).json({
@@ -142,6 +151,39 @@ export default {
                 message: "Success get user profile",
                 data: result,
             })
+        } catch (error) {
+            const err = error as unknown as Error;
+            res.status(400).json({
+                message: err.message,
+                data: null,
+            });
+        }
+    },
+    async activation(req: Request, res: Response) {
+        /**
+         #swagger.tags = ['Auth']
+         #swagger.requestBody ={
+         require: true,
+         schema: {$ref: '#/components/schemas/ActivationRequest'}
+         }
+         */
+        try {
+            const {code} = req.body as {code: string};
+
+            const user = await UserModel.findOneAndUpdate({
+                activationCode : code,
+            },
+            {
+                isActive: true,
+            },
+            {
+                new: true,
+            }
+        );
+        res.status(200).json({
+            message: "user successfully activated",
+            data: user
+        });
         } catch (error) {
             const err = error as unknown as Error;
             res.status(400).json({
