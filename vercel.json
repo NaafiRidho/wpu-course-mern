@@ -4,7 +4,9 @@
     {
       "src": "back-end-acara/src/index.ts",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["src/**"] }
+      "config": {
+        "includeFiles": ["back-end-acara/src/**"]
+      }
     }
   ],
   "routes": [
