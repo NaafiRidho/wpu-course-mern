@@ -9,3 +9,9 @@ export interface IReqUser extends Request {
 export interface IUserToken extends Omit<User, "password" | "activationCode" | "isActive" | "email" | "fullName" | "profilePicture" | "userName"> {
     id?: Types.ObjectId;
 }
+
+export interface IPaginationQuery{
+    page: number;
+    limit: number;
+    search?: string;
+}
