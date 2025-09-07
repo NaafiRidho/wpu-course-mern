@@ -56,9 +56,21 @@ const doc = {
             RemoveMediaRequest: {
                 fileUrl: "",
             },
-
+            CreateBannerRequest: {
+                title: "Banner-1-Title",
+                image: "https://res.cloudinary.com/dvauq4wwt/image/upload/v1757072953/alwbvw43gnsbtbnfbnnx.png",
+                isShow: true
+            },
+            CreateTicketRequest: {
+                price: 2000,
+                name: "Ticket VIP",
+                events: "68af0e5c954c82ae827595ab",
+                description: "Ticket VIP-Description",
+                quantity: 100,
+            }
         },
-    }
+
+    },
 };
 
 const outputFile = "./swagger_output.json";
