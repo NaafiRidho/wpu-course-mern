@@ -26,9 +26,9 @@ const BannerSchema = new Schema<Banner>({
         type: Schema.Types.Boolean,
         required: true,
     }
-},{
+}, {
     timestamps: true
-});
+}).index({ title: "text" });
 
 const BannerModel = mongoose.model(BANNER_NAME_MODEL, BannerSchema);
 
