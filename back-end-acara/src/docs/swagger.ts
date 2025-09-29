@@ -67,6 +67,11 @@ const doc = {
                 events: "68af0e5c954c82ae827595ab",
                 description: "Ticket VIP-Description",
                 quantity: 100,
+            },
+            CreateOrderRequest: {
+                events: "event object id",
+                ticket: "ticket object id",
+                quantity: 1
             }
         },
 

@@ -5,7 +5,7 @@ import {
 } from "./env"
 
 export interface Payment {
-    transaction_detail: {
+    transaction_details: {
         order_id: string;
         gross_amount: number;
     }

@@ -32,7 +32,7 @@ export interface Order extends Omit<TypeOrder, "createdBy" | "events" | "ticket"
     total: number;
     status: string;
     payment: TypeReponseMidtrans;
-    cratedBy: ObjectId;
+    createdBy: ObjectId;
     events: ObjectId;
     orderId: string;
     ticket: ObjectId;
@@ -44,7 +44,7 @@ const orderSchema = new Schema<Order>({
     orderId: {
         type: Schema.Types.String
     },
-    cratedBy: {
+    createdBy: {
         type: Schema.Types.ObjectId,
         ref: USER_MODEL_NAME,
         required: true,
@@ -105,7 +105,7 @@ orderSchema.pre('save', async function () {
     const order = this;
     order.orderId = getId();
     order.payment = await payment.createLink({
-        transaction_detail: {
+        transaction_details: {
             gross_amount: order.total,
             order_id: order.orderId
         }
