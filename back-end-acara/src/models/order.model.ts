@@ -8,14 +8,14 @@ import payment, { TypeReponseMidtrans } from "../utils/payment";
 
 export const ORDER_MODEL_NAME = 'Order';
 
-export const orderDAO = Yup.object({
+export const orderDTO = Yup.object({
     createdBy: Yup.string().required(),
     events: Yup.string().required(),
     ticket: Yup.string().required(),
     quantity: Yup.number().required(),
 });
 
-export type TypeOrder = Yup.InferType<typeof orderDAO>;
+export type TypeOrder = Yup.InferType<typeof orderDTO>;
 
 export enum OrderStatus {
     PENDING = 'pending',

@@ -14,10 +14,67 @@ import orderController from "../controllers/order.controller";
 
 const router = express.Router();
 
-router.post('/auth/register', authController.register);
-router.post('/auth/login', authController.login);
-router.get('/auth/me', authMiddleware, authController.me);
-router.post('/auth/activation', authController.activation);
+router.post('/auth/register', authController.register
+    /*
+             #swagger.tags = ['Auth']
+             #swagger.requestBody={
+             require: true,
+             schema: {$ref: "#/components/schemas/RegisterRequest"}
+             }
+             */
+);
+router.post('/auth/login', authController.login
+    /*
+             #swagger.tags = ['Auth']
+             #swagger.requestBody={
+             require: true,
+             schema: {$ref: "#/components/schemas/LoginRequest"}
+             }
+             */
+);
+
+router.get('/auth/me', authMiddleware, authController.me
+    /**
+ #swagger.tags = ['Auth']
+ #swagger.security = [{
+ "bearerAuth": []
+ }]
+ */
+);
+router.post('/auth/activation', authController.activation
+    /**
+         #swagger.tags = ['Auth']
+         #swagger.requestBody ={
+         require: true,
+         schema: {$ref: '#/components/schemas/ActivationRequest'}
+         }
+         */
+);
+router.put('/auth/update-profile', [authMiddleware, aclMiddleware([ROLES.MEMBER])], authController.updateProfile
+    /**
+         #swagger.tags = ['Auth']
+         #swagger.security = [{
+        "bearerAuth": []
+        }]
+         #swagger.requestBody ={
+         require: true,
+         schema: {$ref: '#/components/schemas/UpdateProfileRequest'}
+         }
+         */
+);
+router.put('/auth/update-password', [authMiddleware, aclMiddleware([ROLES.MEMBER])], authController.updatePassword
+    /**
+         #swagger.tags = ['Auth']
+         #swagger.security = [{
+        "bearerAuth": []
+        }]
+         #swagger.requestBody ={
+         require: true,
+         schema: {$ref: '#/components/schemas/UpdatePasswordRequest'}
+         }
+         */
+);
+
 
 router.post('/orders', [authMiddleware, aclMiddleware([ROLES.MEMBER])], orderController.create
     /*

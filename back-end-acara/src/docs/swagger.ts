@@ -32,6 +32,15 @@ const doc = {
             ActivationRequest: {
                 code: "abcdef"
             },
+            UpdateProfileRequest: {
+                fullName: '',
+                profilePicture: '',
+            },
+            UpdatePasswordRequest: {
+                oldPassword: '',
+                password: '',
+                confirmPassword: '',
+            },
             CreateCategoryRequest: {
                 name: "Kategori Baru",
                 description: "Deskripsi Kategori Baru",
@@ -72,7 +81,7 @@ const doc = {
                 events: "event object id",
                 ticket: "ticket object id",
                 quantity: 1
-            }
+            },
         },
 
     },

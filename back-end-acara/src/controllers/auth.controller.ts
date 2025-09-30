@@ -1,55 +1,66 @@
 import { Request, Response } from "express";
 import * as yup from 'yup';
-import UserModel from "../models/user.model";
+import UserModel, { userDTO, userLoginDTO, userUpdatePasswordDTO } from "../models/user.model";
 import { encrypt } from "../utils/encryption";
 import { genetareToken } from "../utils/jwt";
 import { IReqUser } from "../utils/interfaces";
 import response from "../utils/response";
 
-type TRegister = {
-    fullName: string;
-    userName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-}
-
-type Tlogin = {
-    identifier: string,
-    password: string
-};
-
-const registerValidateSchema = yup.object({
-    fullName: yup.string().required(),
-    userName: yup.string().required(),
-    email: yup.string().email().required(),
-    password: yup.string().required().min(6, "Password must be at least 6 characters").test('at-least-one-uppercase-latter', 'Contains at least one uppercase latter', (value) => {
-        if (!value) return false;
-        const regex = /^(?=.*[A-Z])/;
-        return regex.test(value);
-    }).test('at-least-one-number-latter', 'Contains at least one number latter', (value) => {
-        if (!value) return false;
-        const regex = /^(?=.*\d)/;
-        return regex.test(value);
-    }),
-    confirmPassword: yup.string().required().oneOf([yup.ref('password'), ""], "Password not match"),
-});
 
 export default {
+    async updateProfile(req: IReqUser, res: Response) {
+        try {
+            const userId = req?.user?.id;
+            const { fullName, profilePicture } = req.body;
+
+            const result = await UserModel.findByIdAndUpdate(userId, { fullName, profilePicture }, { new: true });
+
+            if (!result) {
+                return response.notFound(res, "user not found");
+            }
+
+            response.success(res, result, 'Success to update profile')
+        } catch (error) {
+            response.error(res, error, "Failed to update profile");
+        }
+    },
+    async updatePassword(req: IReqUser, res: Response) {
+        try {
+            const userId = req?.user?.id;
+            const { oldPassword, password, confirmPassword } = req.body;
+
+            await userUpdatePasswordDTO.validate({
+                oldPassword,
+                password,
+                confirmPassword
+            });
+
+            const user = await UserModel.findById(userId);
+
+            if (!user || user.password !== encrypt(oldPassword)) {
+                return response.notFound(res, "user not found");
+            }
+
+            const result = await UserModel.findByIdAndUpdate(userId, { password: encrypt(password) }, { new: true });
+
+            response.success(res, result, 'success to update password')
+
+        } catch (error) {
+            response.error(res, error, "Failed to update password");
+        }
+    },
+
     async register(req: Request, res: Response) {
-        /**
-         #swagger.tags = ['Auth']
-         */
         const {
             fullName,
             userName,
             email,
             password,
             confirmPassword
-        } = req.body as unknown as TRegister;
+        } = req.body;
 
         try {
-            await registerValidateSchema.validate({
+            await userDTO.validate({
                 fullName,
                 userName,
                 email,
@@ -72,20 +83,17 @@ export default {
     },
 
     async login(req: Request, res: Response) {
-        /**
-         #swagger.tags = ['Auth']
-         #swagger.requestBody={
-         require: true,
-         schema: {$ref: "#/components/schemas/LoginRequest"}
-         }
-         */
-
-        const {
-            identifier,
-            password
-        } = req.body as unknown as Tlogin
         try {
-            //ambil data user berdasarkan identifier dapat menggunakan email atau username
+            const {
+                identifier,
+                password
+            } = req.body
+
+            await userLoginDTO.validate({
+                identifier,
+                password
+            })
+
             const userIdentifier = await UserModel.findOne({
                 $or: [
                     {
@@ -111,6 +119,7 @@ export default {
             const token = genetareToken({
                 id: userIdentifier._id,
                 role: userIdentifier.role,
+                createdAt: userIdentifier.createdAt, // pakai timestamp user dari database
             });
 
             response.success(res, token, 'login success');
@@ -119,12 +128,6 @@ export default {
         }
     },
     async me(req: IReqUser, res: Response) {
-        /**
-         #swagger.tags = ['Auth']
-         #swagger.security = [{
-         "bearerAuth": []
-         }]
-         */
         try {
             const user = req.user;
             const result = await UserModel.findById(user?.id)
@@ -135,13 +138,6 @@ export default {
         }
     },
     async activation(req: Request, res: Response) {
-        /**
-         #swagger.tags = ['Auth']
-         #swagger.requestBody ={
-         require: true,
-         schema: {$ref: '#/components/schemas/ActivationRequest'}
-         }
-         */
         try {
             const { code } = req.body as { code: string };
 
