@@ -71,13 +71,13 @@ export default {
             const { id } = req.params;
 
             if (!isValidObjectId(id)) {
-                response.notFound(res, 'Failed find one a event')
+                return response.notFound(res, 'Invalid event ID')
             }
 
             const result = await EventModel.findById(id);
 
             if (!result) {
-                response.notFound(res, 'Failed find one a event')
+                return response.notFound(res, 'Event not found')
             }
 
             response.success(res, result, 'succes find one event');
@@ -90,7 +90,7 @@ export default {
             const { id } = req.params;
 
             if (!isValidObjectId(id)) {
-                response.notFound(res, 'Failed update a event')
+                return response.notFound(res, 'Invalid event ID')
             }
 
             const result = await EventModel.findByIdAndUpdate(id, req.body, {
@@ -98,7 +98,7 @@ export default {
             });
 
             if (!result) {
-                response.notFound(res, 'Failed remove a event')
+                return response.notFound(res, 'Event not found')
             }
 
             response.success(res, result, 'succes update event');
@@ -111,7 +111,7 @@ export default {
             const { id } = req.params;
 
             if (!isValidObjectId(id)) {
-                response.notFound(res, 'Failed remove a event')
+                return response.notFound(res, 'Invalid event ID')
             }
 
             const result = await EventModel.findByIdAndDelete(id, { new: true });
@@ -134,7 +134,7 @@ export default {
             const result = await EventModel.findOne({ slug });
             
             if (!result) {
-                response.notFound(res, 'Failed find one a event')
+                return response.notFound(res, 'Event not found')
             }
 
             response.success(res, result, 'succes find one by slug event');

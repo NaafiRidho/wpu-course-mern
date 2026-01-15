@@ -52,14 +52,14 @@ export default {
         try {
             const { id } = req.params;
 
-            if (isValidObjectId(id)) {
-                response.notFound(res, 'Failed find one a category')
+            if (!isValidObjectId(id)) {
+                return response.notFound(res, 'Invalid category ID')
             }
 
             const result = await CategoryModel.findById(id);
 
             if (!result) {
-                response.notFound(res, 'Failed find one a category')
+                return response.notFound(res, 'Category not found')
             }
 
             response.success(res, result, 'succes find one category');
@@ -71,8 +71,8 @@ export default {
         try {
             const { id } = req.params;
 
-            if (isValidObjectId(id)) {
-                response.notFound(res, 'Failed update a category')
+            if (!isValidObjectId(id)) {
+                return response.notFound(res, 'Invalid category ID')
             }
 
             const result = await CategoryModel.findByIdAndUpdate(id, req.body, {
@@ -88,8 +88,8 @@ export default {
         try {
             const { id } = req.params;
 
-            if (isValidObjectId(id)) {
-                response.notFound(res, 'Failed remove a category')
+            if (!isValidObjectId(id)) {
+                return response.notFound(res, 'Invalid category ID')
             }
 
             const result = await CategoryModel.findByIdAndDelete(id, { new: true });

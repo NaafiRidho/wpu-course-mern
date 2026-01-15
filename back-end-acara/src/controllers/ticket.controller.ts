@@ -57,13 +57,13 @@ export default {
             const { id } = req.params;
 
             if (!isValidObjectId(id)) {
-                response.notFound(res, 'Failed find one a ticket')
+                return response.notFound(res, 'Invalid ticket ID')
             }
 
             const result = await TicketModel.findById(id);
 
             if (!result) {
-                response.notFound(res, 'Failed find one a ticket')
+                return response.notFound(res, 'Ticket not found')
             }
 
             response.success(res, result, 'succes find one ticket');
@@ -76,7 +76,7 @@ export default {
             const { id } = req.params;
 
             if (!isValidObjectId(id)) {
-                response.notFound(res, 'Failed update a ticket')
+                return response.notFound(res, 'Invalid ticket ID')
             }
 
             const result = await TicketModel.findByIdAndUpdate(id, req.body,
@@ -92,7 +92,7 @@ export default {
             const { id } = req.params;
 
             if (!isValidObjectId(id)) {
-                response.notFound(res, 'Failed remove a ticket')
+                return response.notFound(res, 'Invalid ticket ID')
             }
 
             const result = await TicketModel.findByIdAndDelete(id,
